@@ -193,8 +193,10 @@ function renderStrip(){
   c.innerHTML=`${w.sat.getDate()<=7?`<span class="m">${MONTHS[w.sat.getMonth()]}</span>`:''}<b class="num">${w.sat.getDate()}</b>`;
   c.onclick=()=>{selectedWE=w.key;renderStrip();const el=document.getElementById('we-'+w.key);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.animate([{boxShadow:'0 0 0 3px var(--accent)'},{boxShadow:'none'}],{duration:1600})}else toast('Rien ce week-end pour la sélection')};
   host.appendChild(c)}
- // scroll strip to current
- const t=$('.we-cell.today',host);if(t)host.scrollLeft=Math.max(0,t.offsetLeft-host.clientWidth/2+t.offsetWidth/2);if(window.__updStrip)setTimeout(window.__updStrip,50)}
+ // cale la bande sur ce que la liste affiche : dernier week-end passé à gauche, puis les suivants
+ const cells=[...host.children];let i=cells.findIndex(c=>!c.classList.contains('past'));if(i<0)i=cells.length-1;const t=cells[Math.max(0,i-1)];
+ if(t){const prev=host.style.scrollBehavior;host.style.scrollBehavior='auto';host.scrollLeft=Math.max(0,t.offsetLeft-host.offsetLeft-4);host.style.scrollBehavior=prev}
+ if(window.__updStrip)setTimeout(window.__updStrip,50)}
 
 function scoreHtml(it,cls){if(it.kind!=='match'||!it.joue||it.bd==null||it.be==null)return '';const us=it.home?it.bd:it.be,them=it.home?it.be:it.bd;const res=us>them?'win':us<them?'loss':'draw';return `<span class="score ${res}${cls?' '+cls:''}" title="Résultat (${it.home?'domicile':'extérieur'})"><span class="num">${it.bd}</span> – <span class="num">${it.be}</span></span>`}
 function teamTag(t){return `<span class="tm" style="background:${t.color}">${esc(t.label)}</span>`}
