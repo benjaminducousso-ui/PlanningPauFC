@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="fr" data-mode="jeunes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23F2C218%27/%3E%3Ctext x=%2732%27 y=%2742%27 font-size=%2726%27 font-family=%27Arial%27 font-weight=%27700%27 text-anchor=%27middle%27 fill=%27%230E2A5C%27%3EPFC%3C/text%3E%3C/svg%3E">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body style="margin:0">
+<title>Pau FC · Calendrier Jeunes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="app.css">
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="crest">PFC</div>
+      <div>
+        <h1>Calendrier Jeunes</h1>
+        <div class="sub">Pau FC · équipes masculines U7 → U18 · saison <span id="season-lbl">2026-2027</span></div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="sync" id="sync-status"><i></i><span>Données FFF du …</span></span>
+      <button class="btn ghost" id="b-alerts" hidden>Alertes <span class="badge n" id="alert-count" hidden>0</span></button>
+      <button class="btn ghost" id="b-add-event">+ Événement</button>
+      <button class="btn ghost" id="b-export">Exporter</button>
+      <button class="btn primary" id="b-print">Récap PDF</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="side no-print">
+    <section class="panel">
+      <div class="hd"><h2>Domicile / Extérieur</h2></div>
+      <div class="bd">
+        <div class="seg hl full" id="seg-ha">
+          <button data-v="all" class="on">Tous</button>
+          <button data-v="home">Domicile</button>
+          <button data-v="away">Extérieur</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="seg full" id="seg-type">
+          <button data-v="all" class="on">Tout</button>
+          <button data-v="champ">Champ.</button>
+          <button data-v="coupe">Coupes</button>
+          <button data-v="event">Événements</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="seg full" id="seg-gender" hidden>
+          <button data-v="all" class="on">Tous</button>
+          <button data-v="H">Hommes</button>
+          <button data-v="F">Féminines</button>
+        </div>
+        <div style="height:10px" id="seg-gender-gap" hidden></div>
+        <div class="seg full" id="seg-when">
+          <button data-v="upcoming" class="on">À venir</button>
+          <button data-v="all">Toute la saison</button>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="hd"><h2>Équipes</h2>
+        <div class="mini-links"><button class="link" id="t-all">Toutes</button><button class="link" id="t-none">Aucune</button></div>
+      </div>
+      <div class="bd" id="team-filters"></div>
+    </section>
+  </aside>
+
+  <main class="main">
+    <div class="print-only print-hd">
+      <h1>Pau FC · Calendrier Jeunes — récapitulatif</h1>
+      <div class="meta" id="print-meta"></div>
+    </div>
+
+    <nav class="tabs no-print" role="tablist">
+      <button class="on" data-view="we">Week-ends</button>
+      <button data-view="list">Liste</button>
+      <button data-view="alerts" hidden>Alertes <span class="badge n" id="alert-count-2" hidden>0</span></button>
+      <button data-view="settings">Équipes & réglages</button>
+      <button data-view="sync" hidden>Mise à jour FFF</button>
+    </nav>
+
+    <section class="view on" id="v-we">
+      <div class="strip-wrap no-print">
+        <div class="strip-hd">
+          <h2>La saison week-end par week-end <span class="muted" style="font-family:var(--font);font-weight:400;font-size:12px">— nombre de rencontres de la sélection</span></h2>
+          <div class="legend"><span><i style="background:var(--l0)"></i>rien</span><span><i style="background:var(--l1)"></i>calme</span><span><i style="background:var(--l2)"></i>normal</span><span><i style="background:var(--l3)"></i>chargé</span><span><i style="background:var(--l4)"></i>très chargé (9+)</span></div>
+        </div>
+        <div class="strip-nav"><button class="strip-arrow" id="strip-prev" aria-label="Semaines précédentes">‹</button><div class="strip" id="strip"></div><button class="strip-arrow" id="strip-next" aria-label="Semaines suivantes">›</button></div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="we-list" id="we-list"></div>
+    </section>
+
+    <section class="view" id="v-list">
+      <div class="tbl-wrap"><table class="list" id="list-table"></table></div>
+    </section>
+
+    <section class="view" id="v-alerts">
+      <div class="panel">
+        <div class="hd"><h2>Alertes & changements</h2>
+          <div style="display:flex;gap:6px"><button class="btn small" id="b-ack-all">Tout marquer comme lu</button><button class="btn small" id="b-clear-alerts">Vider</button></div>
+        </div>
+        <div id="alerts-list"></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-settings">
+      <div class="panel" style="margin-bottom:14px">
+        <div class="hd"><h2>Équipes</h2><button class="btn small" id="b-add-team">+ Ajouter une équipe / catégorie</button></div>
+        <div class="bd">
+          <p class="help">Libellé affiché et format de jeu (sert à la durée dans l'export agenda). Les équipes FFF sont alimentées automatiquement. Les U7, U9 et U11 sont reliées à la plateforme Foot Animation (FAL) du district : leurs plateaux apparaîtront à la mise à jour dès que le district les publie. « + Événement » sert aux tournois et rendez-vous hors calendrier officiel. Les événements « club » (tournois, plateaux hors FFF, stages…) sont publiés pour tout le monde depuis « + Événement » → « Publier pour tout le club », avec le nom de l'auteur ; ils sont enregistrés dans le registre Google Sheet du club, dont le responsable est prévenu par e-mail et où supprimer une ligne retire l'événement pour tous. « Ajouter pour moi seulement » reste dans votre navigateur. Le genre sert au filtre Hommes/Féminines ; sur le Calendrier Jeunes, une équipe passée en « Féminines » disparaît de la page (les équipes seniors n'y figurent jamais).</p>
+          <div class="set-team set-th"><span></span><span>Équipe</span><span class="hide-s">Format</span><span class="hide-s">Genre</span><span></span></div>
+          <div id="team-settings"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="hd"><h2>Données locales</h2></div>
+        <div class="bd">
+          <p class="help">Vos équipes ajoutées, événements, ajustements et alertes sont enregistrés dans ce navigateur. Pour les partager ou changer d'ordinateur, exportez puis importez la sauvegarde.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="b-backup">Télécharger la sauvegarde</button>
+            <button class="btn" id="b-restore">Importer une sauvegarde</button>
+            <button class="btn danger" id="b-reset">Réinitialiser</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-sync">
+      <div class="panel" style="margin-bottom:14px">
+        <div class="hd"><h2>Mise à jour des calendriers FFF</h2></div>
+        <div class="bd">
+          <p>Les rencontres viennent du site officiel <b>epreuves.fff.fr</b> (District des Pyrénées-Atlantiques + Ligue Nouvelle-Aquitaine). Dernière récupération : <b id="sync-date">—</b>.</p>
+          <p style="margin-top:10px"><b>Mise à jour automatique :</b> une tâche programmée relit le site FFF <b>chaque lundi à 7h</b> et republie cette page ; les dates, horaires ou terrains modifiés apparaissent ensuite dans l'onglet Alertes à l'ouverture. Besoin d'une mise à jour tout de suite ? Lancez cette tâche (« Exécuter ») depuis vos tâches programmées dans Claude, ou demandez-la dans la conversation qui a créé cette page.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="hd"><h2>Faire la mise à jour soi-même (5 minutes, ordinateur)</h2></div>
+        <div class="bd">
+          <p class="help">Le site FFF ne permet pas à cette page de lire ses données directement. On passe donc par un petit favori qui, une fois cliqué sur le site FFF, récupère toutes les équipes et copie le résultat. À faire sur ordinateur (Chrome, Edge, Firefox ou Safari), pas sur téléphone.</p>
+          <h3 style="font-size:16px;margin:12px 0 4px">Étape 1 — Créer le favori (une seule fois)</h3>
+          <ol class="steps">
+            <li>Cliquez sur <button class="btn small" id="b-copy-bm">Copier le code du favori</button> (ou copiez le texte de la zone ci-dessous).</li>
+            <li>Dans votre navigateur, faites un clic droit sur la <b>barre de favoris</b> → « Ajouter une page » (Chrome/Edge) ou « Nouveau marque-page » (Firefox). Si la barre est cachée : <b>Ctrl+Maj+B</b> (Mac : ⌘+Maj+B).</li>
+            <li>Nom : <b>Synchro Pau FC</b>. Adresse / URL : <b>collez le code</b>. Vérifiez que l'adresse commence bien par <code>javascript:</code> (certains navigateurs retirent ce début au collage : retapez-le si besoin). Enregistrez.</li>
+          </ol>
+          <details style="margin:6px 0 0"><summary class="help">Voir le code du favori</summary><code class="bm" id="bm-code"></code></details>
+          <h3 style="font-size:16px;margin:14px 0 4px">Étape 2 — Récupérer les données</h3>
+          <ol class="steps">
+            <li>Ouvrez <a href="https://epreuves.fff.fr/competition/club/501681-pau-f-c/equipes.html" target="_blank" rel="noopener">la page Équipes du Pau FC sur epreuves.fff.fr</a> (elle liste toutes les équipes du club).</li>
+            <li>Sur cette page, cliquez sur le favori <b>Synchro Pau FC</b>. Un encadré bleu apparaît en haut à droite et compte les équipes ; comptez 20 à 40 secondes.</li>
+            <li>Quand il affiche « terminée », les données sont copiées dans le presse-papiers.</li>
+          </ol>
+          <h3 style="font-size:16px;margin:14px 0 4px">Étape 3 — Coller ici</h3>
+          <div class="form">
+            <label class="full">Collez les données (Ctrl+V / ⌘+V)<textarea id="sync-paste" placeholder="Le texte collé commence par {&quot;fetchedAt&quot;…"></textarea></label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn primary" id="b-sync-apply">Analyser et appliquer</button><button class="btn" id="b-sync-file">… ou choisir un fichier .json</button></div>
+          <div id="sync-result" class="help" style="margin-top:10px"></div>
+          <p class="help" style="margin-top:12px">Ça ne marche pas ? Le cas le plus fréquent : le favori a été cliqué depuis une autre page que celle des Équipes du Pau FC, ou l'adresse du favori a perdu son début <code>javascript:</code>. En dernier recours, demandez la mise à jour à Claude.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- modals -->
+<div class="modal-bg" id="modal"><div class="modal" role="dialog" aria-modal="true">
+  <div class="hd"><h2 id="modal-title">Titre</h2><button class="icon-btn" id="modal-close" aria-label="Fermer">✕</button></div>
+  <div class="bd" id="modal-body"></div>
+  <div class="ft" id="modal-foot"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="file-input" accept="application/json,.json" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script id="fff-data" type="application/json">{"fetchedAt": "2000-01-01T00:00:00Z", "source": "", "teams": [], "cols": ["id", "team", "cpNo", "cp", "type", "niveau", "poule", "j", "tour", "date", "heureOk", "statut", "home", "dom", "ext", "stade", "ville", "surface", "bd", "be", "joue"], "rows": []}</script>
+<script id="shared-events" type="application/json">[]</script>
+<script src="app.js"></script>
+
+</body>
+</html>
